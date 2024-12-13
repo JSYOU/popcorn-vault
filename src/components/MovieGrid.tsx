@@ -9,26 +9,20 @@ import { Movie } from "@/types/movie";
 const { Meta } = Card;
 
 const InfoCard = styled(Card)`
-  & .ant-card-body {
-    background: #eee;
-  }
   transition: transform 0.2s ease;
   &:hover {
     transform: scale(1.05);
   }
+  @media (max-width: 768px) {
+    & .ant-card-body {
+      padding: 15px;
+    }
+  }
 `;
 
 const InfoMeta = styled(Meta)`
-  .ant-card-meta-title {
+  &.ant-card-meta-title {
     overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-  }
-  .ant-card-meta-description {
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 `;
 
@@ -72,8 +66,8 @@ const MovieGrid: React.FC<MovieGridProps> = ({ movies, loading }) => {
               <Image
                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                 alt={movie.title}
-                width={500}
-                height={750}
+                width={300}
+                height={450}
                 style={{ objectFit: "cover", width: "100%", height: "auto" }}
               />
             }

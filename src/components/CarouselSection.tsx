@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback } from "react";
-import { Carousel } from "antd";
+import { Carousel, Button } from "antd";
 import styled from "styled-components";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { Movie } from "@/types/movie";
@@ -9,7 +9,7 @@ import { useWindowSize } from "@/hooks/useWindowSize";
 
 const CarouselItem = styled.img`
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 60px);
   object-fit: cover;
   position: relative;
 `;
@@ -21,7 +21,7 @@ const CarouselContent = styled.div`
   max-width: 100vw;
   bottom: 10%;
   padding: 20px 50px 30px 50px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
 
   @media (max-width: 768px) {
     padding: 20px 30px 30px 30px;
@@ -31,7 +31,6 @@ const CarouselContent = styled.div`
 
 const CarouselTitle = styled.h2`
   font-size: 2.8rem;
-  color: #fff;
   margin-bottom: 15px;
 
   @media (max-width: 768px) {
@@ -41,7 +40,6 @@ const CarouselTitle = styled.h2`
 
 const CarouselDescription = styled.p`
   font-size: 1.6rem;
-  color: #fff;
   margin-bottom: 20px;
   overflow: hidden;
   display: -webkit-box;
@@ -54,26 +52,12 @@ const CarouselDescription = styled.p`
   }
 `;
 
-const CarouselDetailButton = styled.button`
-  background: #fff;
-  color: #000;
-  padding: 10px 20px;
+const CarouselDetailButton = styled(Button)`
+  padding: 25px 20px;
   font-size: 1.6rem;
   font-weight: 500;
-  transition: all 0.3s ease;
-  border-radius: 10px;
-  border: none;
-
-  &:hover {
-    background: #aaa;
-    color: #000;
-  }
-
-  &:active {
-    background: #888;
-    color: #000;
-  }
 `;
+
 const InfoIcon = styled(InfoCircleOutlined)`
   margin-right: 10px;
 `;
@@ -104,6 +88,9 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({ movies }) => {
             <CarouselTitle>{movie.title}</CarouselTitle>
             <CarouselDescription>{movie.overview}</CarouselDescription>
             <CarouselDetailButton
+              color="default"
+              variant="filled"
+              size="large"
               onClick={() => {
                 console.log("click");
               }}
