@@ -2,9 +2,10 @@
 
 import React from "react";
 import styled from "styled-components";
-import { Row, Col, Card, Rate } from "antd";
+import { Row, Col, Card } from "antd";
 import Image from "next/image";
 import { Movie } from "@/types/movie";
+import Rate from "@/components/Rate";
 
 const { Meta } = Card;
 
@@ -45,17 +46,6 @@ const MovieGrid: React.FC<MovieGridProps> = ({ movies, loading }) => {
     );
   }
 
-  const ShowRate = ({ rate }: { rate: number }) => {
-    return (
-      <Rate
-        disabled
-        allowHalf
-        defaultValue={rate / 2}
-        style={{ color: "#fadb14" }}
-      />
-    );
-  };
-
   return (
     <Row gutter={[16, 16]}>
       {movies.map((movie) => (
@@ -74,7 +64,7 @@ const MovieGrid: React.FC<MovieGridProps> = ({ movies, loading }) => {
           >
             <InfoMeta
               title={movie.title}
-              description={<ShowRate rate={movie.vote_average} />}
+              description={<Rate rate={movie.vote_average} />}
             />
           </InfoCard>
         </Col>

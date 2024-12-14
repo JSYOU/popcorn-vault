@@ -71,7 +71,6 @@ const Header: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
   const hideSearch = pathname === "/search";
-  console.log("pathname", pathname, hideSearch);
 
   const items: MenuProps["items"] = [
     {
