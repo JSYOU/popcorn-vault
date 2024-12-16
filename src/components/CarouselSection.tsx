@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { Movie } from "@/types/movie";
 import { useWindowSize } from "@/hooks/useWindowSize";
+import { useRouter } from "next/navigation";
 
 const CarouselItem = styled.img`
   width: 100%;
@@ -68,6 +69,7 @@ interface CarouselSectionProps {
 
 const CarouselSection: React.FC<CarouselSectionProps> = ({ movies }) => {
   const { width, height } = useWindowSize();
+  const router = useRouter();
 
   const imgUrl = useCallback(
     (movie: Movie) => {
@@ -92,7 +94,7 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({ movies }) => {
               variant="filled"
               size="large"
               onClick={() => {
-                console.log("click");
+                router.push(`/movie/${movie.id}`);
               }}
             >
               <InfoIcon />

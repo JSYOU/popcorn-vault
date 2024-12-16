@@ -28,3 +28,12 @@ export async function fetchSearchMovies(query: string, page: number = 1) {
     page: res.data.page,
   };
 }
+
+export async function fetchMovieDetail(id: string | number) {
+  const res = await client.get(`/movie/${id}`, {
+    params: {
+      append_to_response: "credits,videos,reviews",
+    },
+  });
+  return res.data;
+}
