@@ -12,6 +12,13 @@ import Reviews from "@/components/Reviews";
 import type { Movie, CastMember, ReviewResult } from "@/types/movie";
 import MovieNotFound from "@/components/MovieNotFound";
 
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(50vh);
+`;
+
 const Container = styled.div`
   padding: 60px;
   @media (max-width: 768px) {
@@ -36,10 +43,23 @@ export default function MoviePage() {
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-    fetchMovieDetail(id)
-      .then((data) => setMovie(data.movie!))
-      .catch(() => messageApi.error("無法取得電影詳細資訊"))
-      .finally(() => setLoading(false));
+    const fetchMovie = async () => {
+      try {
+        const data = await fetchMovieDetail(id);
+        if ("error" in data) {
+          messageApi.error("無法取得電影資料");
+          setMovie(null);
+        } else {
+          setMovie(data);
+        }
+      } catch (err) {
+        console.error(err);
+        messageApi.error("無法取得電影資料");
+        setMovie(null);
+      }
+      setLoading(false);
+    };
+    fetchMovie();
   }, [id, messageApi]);
 
   const cast = useMemo<CastMember[]>(() => movie?.credits?.cast || [], [movie]);
@@ -61,9 +81,9 @@ export default function MoviePage() {
 
   if (loading)
     return (
-      <Container>
+      <LoadingContainer>
         <Spin />
-      </Container>
+      </LoadingContainer>
     );
   if (!movie) return <MovieNotFound />;
 

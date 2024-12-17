@@ -4,11 +4,6 @@ import type { Movie } from "@/types/movie";
 
 const { tmdbAccountId: accountId } = getConfig();
 
-interface MovieDetailResponse {
-  movie?: Movie;
-  error?: string;
-}
-
 export async function fetchTrendingMovies(): Promise<{
   results: Movie[];
   error?: string;
@@ -113,7 +108,7 @@ export async function fetchSearchMovies(
 
 export async function fetchMovieDetail(
   id: string | number
-): Promise<MovieDetailResponse> {
+): Promise<Movie | { error: string }> {
   try {
     const res = await client.get(`/movie/${id}`, {
       params: {
