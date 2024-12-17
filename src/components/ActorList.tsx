@@ -7,7 +7,7 @@ const { Text } = Typography;
 
 const ScrollContainer = styled.div`
   display: flex;
-  overflow-x: auto; /
+  overflow-x: auto;
   gap: 16px;
   padding: 16px;
 
@@ -16,7 +16,7 @@ const ScrollContainer = styled.div`
   }
 
   @media (max-width: 768px) {
-    gap: 8px; 
+    gap: 8px;
     padding: 8px;
   }
 `;
