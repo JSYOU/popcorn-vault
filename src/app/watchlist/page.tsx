@@ -7,6 +7,7 @@ import { fetchWatchlistMovies } from "@/api/tmdb";
 import type { Movie } from "@/types/movie";
 import NoResults from "@/components/NoResults";
 import HorizontalMovieGrid from "@/components/HorizontalMovieGrid";
+import Lottery from "@/components/Lottery";
 
 const PageContainer = styled.div`
   padding: 20px;
@@ -95,6 +96,7 @@ export default function WatchlistPage() {
   return (
     <PageContainer>
       <Title>我的待看清單</Title>
+      <Lottery movies={movies} />
       <HeaderRow>
         <SortSelect
           defaultValue={sortBy}
