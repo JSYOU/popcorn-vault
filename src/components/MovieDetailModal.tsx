@@ -11,7 +11,7 @@ import Rate from "@/components/Rate";
 import { addToWatchlist, removeFromWatchlist } from "@/api/tmdb";
 
 const MoveTitle = styled.h2`
-  margin-bottom: 15px;
+  margin-bottom: 5px;
 `;
 
 const MovieInfoContainer = styled.div`
@@ -95,46 +95,59 @@ const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
     <>
       {contextHolder}
       <Modal
-        title={<MoveTitle>{movie.title}</MoveTitle>}
+        title={
+          <>
+            <MoveTitle>{movie.title}</MoveTitle>
+            <Space className="actions">
+              {isWatchlistPage ? (
+                <Button
+                  loading={loading}
+                  onClick={handleRemoveFromWatchlist}
+                  icon={<BookOutlined />}
+                  danger
+                >
+                  從待看清單移除
+                </Button>
+              ) : (
+                <Button
+                  loading={loading}
+                  onClick={handleAddToWatchlist}
+                  icon={<BookOutlined />}
+                  type="primary"
+                >
+                  加入待看清單
+                </Button>
+              )}
+              <Link href={`/movie/${movie.id}`}>
+                <Button icon={<InfoCircleOutlined />}>前往詳細頁面</Button>
+              </Link>
+            </Space>
+          </>
+        }
         open={visible}
         onCancel={onClose}
         footer={null}
         width={1200}
+        style={{ top: 20 }}
+        bodyStyle={{ overflowY: "auto", maxHeight: "calc(100vh - 200px)" }}
       >
         <MovieInfoContainer>
-          <BackdropImage
-            src={`https://image.tmdb.org/t/p/original/${movie.backdrop_path}`}
-            alt={movie.title}
-          />
+          {movie.backdrop_path ? (
+            <BackdropImage
+              src={`https://image.tmdb.org/t/p/original/${movie.backdrop_path}`}
+              alt={movie.title}
+            />
+          ) : (
+            <div style={{ textAlign: "center", padding: "75px 0" }}>
+              <h1>Oops!</h1>
+              <p>There is no backdrop image for this movie.</p>
+            </div>
+          )}
           <span>
             <Rate rate={movie.vote_average} /> &nbsp; ({movie.vote_count})
           </span>
-
+          <span>{movie.release_date}</span>
           <p>{movie.overview}</p>
-          <Space className="actions">
-            {isWatchlistPage ? (
-              <Button
-                loading={loading}
-                onClick={handleRemoveFromWatchlist}
-                icon={<BookOutlined />}
-                danger
-              >
-                從待看清單移除
-              </Button>
-            ) : (
-              <Button
-                loading={loading}
-                onClick={handleAddToWatchlist}
-                icon={<BookOutlined />}
-                type="primary"
-              >
-                加入待看清單
-              </Button>
-            )}
-            <Link href={`/movie/${movie.id}`}>
-              <Button icon={<InfoCircleOutlined />}>前往詳細頁面</Button>
-            </Link>
-          </Space>
         </MovieInfoContainer>
       </Modal>
     </>
