@@ -3,16 +3,16 @@ import { isEmpty } from "lodash";
 import {
   fetchTrendingMovies,
   fetchNowPlayingMovies,
-  fetchMovieBannerList,
+  fetchPopularMovies,
 } from "@/api/tmdb";
 import CarouselSection from "@/components/CarouselSection";
 import MovieGrid from "@/components/MovieGrid";
 
 export default async function HomePage() {
   const [bannerMovies, trendingMovies, nowPlayingMovies] = await Promise.all([
-    fetchMovieBannerList(),
+    (await fetchPopularMovies()).results,
     fetchTrendingMovies(),
-    fetchNowPlayingMovies(),
+    (await fetchNowPlayingMovies()).results,
   ]);
 
   return (
