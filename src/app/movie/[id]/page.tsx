@@ -40,7 +40,7 @@ export default function MoviePage() {
       .then((data) => setMovie(data.movie!))
       .catch(() => messageApi.error("無法取得電影詳細資訊"))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, messageApi]);
 
   const cast = useMemo<CastMember[]>(() => movie?.credits?.cast || [], [movie]);
   const director = useMemo<string | null>(

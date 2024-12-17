@@ -1,7 +1,13 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  Suspense,
+} from "react";
+import { useRouter } from "next/navigation";
 import styled from "styled-components";
 import { Input, Button, Spin } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -10,6 +16,7 @@ import type { Movie } from "@/types/movie";
 import { isEmpty } from "lodash";
 import HorizontalMovieGrid from "@/components/HorizontalMovieGrid";
 import NoResults from "@/components/NoResults";
+import SearchQueryProvider from "@/components/SearchQueryProvider";
 
 const Page = styled.div`
   height: 100%;
@@ -74,9 +81,7 @@ const AutoLoadText = styled.div`
 
 export default function SearchPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const q = searchParams.get("q") || "";
-  const [query, setQuery] = useState(q);
+  const [query, setQuery] = useState("");
   const [movies, setMovies] = useState<Movie[]>([]);
   const [pagination, setPagination] = useState({ page: 1, total_pages: 1 });
   const [loading, setLoading] = useState(false);
@@ -94,6 +99,10 @@ export default function SearchPage() {
       router.replace("/");
     }
   };
+
+  const handleQueryChange = useCallback((q: string) => {
+    setQuery(q);
+  }, []);
 
   useEffect(() => {
     if (isEmpty(query)) {
@@ -147,32 +156,35 @@ export default function SearchPage() {
   }, [hasNextPage, loading, pagination.page, query]);
 
   return (
-    <Page>
-      <HeaderRow zoomOut={zoomOut}>
-        <BackButton
-          type="text"
-          size="large"
-          icon={<ArrowLeftOutlined />}
-          onClick={closeOverlay}
-        />
+    <Suspense>
+      <Page>
+        <SearchQueryProvider onQueryChange={handleQueryChange} />
+        <HeaderRow zoomOut={zoomOut}>
+          <BackButton
+            type="text"
+            size="large"
+            icon={<ArrowLeftOutlined />}
+            onClick={closeOverlay}
+          />
 
-        <SearchInput
-          variant="borderless"
-          placeholder="搜尋電影"
-          defaultValue={query}
-          onChange={(e) => onSearch(e.target.value)}
-          allowClear
-          zoomOut={zoomOut}
-        />
-      </HeaderRow>
-      <ListContainer>
-        {noResults && <NoResults />}
-        <HorizontalMovieGrid movies={movies} />
-        {loading && <LoadingAnimation size="large" />}
-        {hasNextPage && (
-          <AutoLoadText ref={autoloadElement}>load more...</AutoLoadText>
-        )}
-      </ListContainer>
-    </Page>
+          <SearchInput
+            variant="borderless"
+            placeholder="搜尋電影"
+            defaultValue={query}
+            onChange={(e) => onSearch(e.target.value)}
+            allowClear
+            zoomOut={zoomOut}
+          />
+        </HeaderRow>
+        <ListContainer>
+          {noResults && <NoResults />}
+          <HorizontalMovieGrid movies={movies} />
+          {loading && <LoadingAnimation size="large" />}
+          {hasNextPage && (
+            <AutoLoadText ref={autoloadElement}>load more...</AutoLoadText>
+          )}
+        </ListContainer>
+      </Page>
+    </Suspense>
   );
 }
