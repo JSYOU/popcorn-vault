@@ -10,21 +10,24 @@ import MovieGrid from "@/components/MovieGrid";
 
 export default async function HomePage() {
   const [bannerMovies, trendingMovies, nowPlayingMovies] = await Promise.all([
-    (await fetchPopularMovies()).results,
-    fetchTrendingMovies(),
-    (await fetchNowPlayingMovies()).results,
+    await fetchPopularMovies(),
+    await fetchTrendingMovies(),
+    await fetchNowPlayingMovies(),
   ]);
 
   return (
     <div>
-      <CarouselSection movies={bannerMovies} />
+      <CarouselSection movies={bannerMovies.results} limit={5} />
       <div style={{ padding: "20px" }}>
-        <h2>熱門電影</h2>
-        <MovieGrid movies={trendingMovies} loading={isEmpty(trendingMovies)} />
+        <h2>本週熱門</h2>
+        <MovieGrid
+          movies={trendingMovies.results}
+          loading={isEmpty(trendingMovies.results)}
+        />
         <h2>新上映</h2>
         <MovieGrid
-          movies={nowPlayingMovies}
-          loading={isEmpty(nowPlayingMovies)}
+          movies={nowPlayingMovies.results}
+          loading={isEmpty(nowPlayingMovies.results)}
         />
       </div>
     </div>

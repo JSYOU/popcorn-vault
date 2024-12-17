@@ -10,6 +10,7 @@ import DetailHeader from "@/components/DetailHeader";
 import Trailer from "@/components/Trailer";
 import Reviews from "@/components/Reviews";
 import type { Movie, CastMember, ReviewResult } from "@/types/movie";
+import MovieNotFound from "@/components/MovieNotFound";
 
 const Container = styled.div`
   padding: 60px;
@@ -36,7 +37,7 @@ export default function MoviePage() {
     if (!id) return;
     setLoading(true);
     fetchMovieDetail(id)
-      .then((data) => setMovie(data))
+      .then((data) => setMovie(data.movie!))
       .catch(() => messageApi.error("無法取得電影詳細資訊"))
       .finally(() => setLoading(false));
   }, [id]);
@@ -64,7 +65,7 @@ export default function MoviePage() {
         <Spin />
       </Container>
     );
-  if (!movie) return <Container>找不到電影詳細資料</Container>;
+  if (!movie) return <MovieNotFound />;
 
   return (
     <Container>

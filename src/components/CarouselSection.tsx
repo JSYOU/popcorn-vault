@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useCallback } from "react";
-import { Carousel, Button } from "antd";
+import { Carousel, Button, Spin } from "antd";
 import styled from "styled-components";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { Movie } from "@/types/movie";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { useRouter } from "next/navigation";
+import { isEmpty } from "lodash";
 
 const CarouselItem = styled.img`
   width: 100%;
@@ -63,13 +64,23 @@ const InfoIcon = styled(InfoCircleOutlined)`
   margin-right: 10px;
 `;
 
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(50vh);
+`;
+
 interface CarouselSectionProps {
+  limit?: number;
   movies: Movie[];
 }
 
-const CarouselSection: React.FC<CarouselSectionProps> = ({ movies }) => {
+const CarouselSection: React.FC<CarouselSectionProps> = ({ movies, limit }) => {
   const { width, height } = useWindowSize();
   const router = useRouter();
+
+  const limitedMovies = limit ? movies.slice(0, limit) : movies;
 
   const imgUrl = useCallback(
     (movie: Movie) => {
@@ -81,9 +92,17 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({ movies }) => {
     [width, height]
   );
 
+  if (isEmpty(movies)) {
+    return (
+      <LoadingContainer>
+        <Spin size="large" />
+      </LoadingContainer>
+    );
+  }
+
   return (
     <Carousel adaptiveHeight draggable autoplay>
-      {movies.map((movie) => (
+      {limitedMovies.map((movie) => (
         <div key={movie.id}>
           <CarouselItem src={imgUrl(movie)} />
           <CarouselContent>
