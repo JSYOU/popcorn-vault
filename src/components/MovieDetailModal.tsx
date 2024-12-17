@@ -1,12 +1,14 @@
 "use client";
 
 import React from "react";
-import { Modal, Button, Space } from "antd";
+import { usePathname } from "next/navigation";
+import { Modal, Button, Space, message } from "antd";
 import styled from "styled-components";
 import { Movie } from "@/types/movie";
 import { BookOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import Rate from "@/components/Rate";
+import { addToWatchlist, removeFromWatchlist } from "@/api/tmdb";
 
 const MoveTitle = styled.h2`
   margin-bottom: 15px;
@@ -30,7 +32,7 @@ const MovieInfoContainer = styled.div`
   }
 `;
 
-const Image = styled.img`
+const BackdropImage = styled.img`
   width: 100%;
   height: auto;
   object-fit: scale-down;
@@ -41,44 +43,101 @@ interface MovieDetailModalProps {
   visible: boolean;
   movie: Movie | null;
   onClose: () => void;
+  onChangeHandler?: () => Promise<void>;
 }
 
 const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
   visible,
   movie,
   onClose,
+  onChangeHandler,
 }) => {
+  const pathname = usePathname();
+  const isWatchlistPage = pathname === "/watchlist";
+  const [messageApi, contextHolder] = message.useMessage();
+  const [loading, setLoading] = React.useState(false);
+
   if (!movie) return null;
-  console.log(movie);
+
+  const handleAddToWatchlist = async () => {
+    try {
+      setLoading(true);
+      await addToWatchlist(movie.id);
+      if (onChangeHandler) {
+        await onChangeHandler();
+      }
+      onClose();
+      messageApi.success("已加入待看清單");
+    } catch {
+      messageApi.error("加入待看清單失敗");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRemoveFromWatchlist = async () => {
+    try {
+      setLoading(true);
+      await removeFromWatchlist(movie.id);
+      if (onChangeHandler) {
+        await onChangeHandler();
+      }
+      onClose();
+      messageApi.success("已從待看清單移除");
+    } catch {
+      messageApi.error("從待看清單移除失敗");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <Modal
-      title={<MoveTitle>{movie.title}</MoveTitle>}
-      open={visible}
-      onCancel={onClose}
-      footer={null}
-      width={1200}
-    >
-      <MovieInfoContainer>
-        <Image
-          src={`https://image.tmdb.org/t/p/original/${movie.backdrop_path}`}
-          alt={movie.title}
-        />
-        <span>
-          <Rate rate={movie.vote_average} /> &nbsp; ({movie.vote_count})
-        </span>
+    <>
+      {contextHolder}
+      <Modal
+        title={<MoveTitle>{movie.title}</MoveTitle>}
+        open={visible}
+        onCancel={onClose}
+        footer={null}
+        width={1200}
+      >
+        <MovieInfoContainer>
+          <BackdropImage
+            src={`https://image.tmdb.org/t/p/original/${movie.backdrop_path}`}
+            alt={movie.title}
+          />
+          <span>
+            <Rate rate={movie.vote_average} /> &nbsp; ({movie.vote_count})
+          </span>
 
-        <p>{movie.overview}</p>
-        <Space className="actions">
-          <Button icon={<BookOutlined />} type="primary">
-            加入待看清單
-          </Button>
-          <Link href={`/movie/${movie.id}`}>
-            <Button icon={<InfoCircleOutlined />}>前往詳細頁面</Button>
-          </Link>
-        </Space>
-      </MovieInfoContainer>
-    </Modal>
+          <p>{movie.overview}</p>
+          <Space className="actions">
+            {isWatchlistPage ? (
+              <Button
+                loading={loading}
+                onClick={handleRemoveFromWatchlist}
+                icon={<BookOutlined />}
+                danger
+              >
+                從待看清單移除
+              </Button>
+            ) : (
+              <Button
+                loading={loading}
+                onClick={handleAddToWatchlist}
+                icon={<BookOutlined />}
+                type="primary"
+              >
+                加入待看清單
+              </Button>
+            )}
+            <Link href={`/movie/${movie.id}`}>
+              <Button icon={<InfoCircleOutlined />}>前往詳細頁面</Button>
+            </Link>
+          </Space>
+        </MovieInfoContainer>
+      </Modal>
+    </>
   );
 };
 

@@ -6,7 +6,8 @@ import { Row, Col, Card } from "antd";
 import Image from "next/image";
 import { Movie } from "@/types/movie";
 import Rate from "@/components/Rate";
-import MovieDetailModal from "./MovieDetailModal";
+import MovieDetailModal from "@/components/MovieDetailModal";
+import LoadingGrid from "@/components/LoagingGrid";
 
 const { Meta } = Card;
 
@@ -46,24 +47,19 @@ const Description = styled.div`
 interface MovieGridProps {
   movies: Movie[];
   loading?: boolean;
+  onRefresh?: () => Promise<void>;
 }
 
-const MovieGrid: React.FC<MovieGridProps> = ({ movies, loading }) => {
+const MovieGrid: React.FC<MovieGridProps> = ({
+  movies,
+  loading,
+  onRefresh,
+}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
   if (loading) {
-    const fakeCard = (
-      <Col xs={12} sm={8} md={6} lg={4} xl={3}>
-        <InfoCard loading />
-      </Col>
-    );
-    return (
-      <Row gutter={[16, 16]}>
-        {fakeCard}
-        {fakeCard}
-      </Row>
-    );
+    <LoadingGrid />;
   }
 
   const handleCardClick = (movie: Movie) => {
@@ -121,6 +117,7 @@ const MovieGrid: React.FC<MovieGridProps> = ({ movies, loading }) => {
         visible={modalVisible}
         movie={selectedMovie}
         onClose={() => setModalVisible(false)}
+        onChangeHandler={onRefresh}
       />
     </>
   );

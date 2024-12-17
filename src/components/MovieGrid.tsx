@@ -6,7 +6,8 @@ import { Row, Col, Card } from "antd";
 import Image from "next/image";
 import { Movie } from "@/types/movie";
 import Rate from "@/components/Rate";
-import MovieDetailModal from "./MovieDetailModal";
+import MovieDetailModal from "@/components/MovieDetailModal";
+import LoadingGrid from "@/components/LoagingGrid";
 
 const { Meta } = Card;
 
@@ -38,16 +39,7 @@ const MovieGrid: React.FC<MovieGridProps> = ({ movies, loading }) => {
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
   if (loading) {
-    return (
-      <Row gutter={[16, 16]}>
-        <Col xs={12} sm={8} md={6} lg={4} xl={3}>
-          <InfoCard loading />
-        </Col>
-        <Col xs={12} sm={8} md={6} lg={4} xl={3}>
-          <InfoCard loading />
-        </Col>
-      </Row>
-    );
+    return <LoadingGrid />;
   }
 
   const handleCardClick = (movie: Movie) => {

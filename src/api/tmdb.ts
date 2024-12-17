@@ -1,4 +1,7 @@
 import client from "./client";
+import getConfig from "@/config";
+
+const { tmdbAccountId: accountId } = getConfig();
 
 export async function fetchTrendingMovies() {
   const res = await client.get("/trending/movie/week");
@@ -36,4 +39,37 @@ export async function fetchMovieDetail(id: string | number) {
     },
   });
   return res.data;
+}
+
+export async function fetchWatchlistMovies(
+  page: number = 1,
+  sortBy: string = "created_at.desc"
+) {
+  const res = await client.get(`/account/${accountId}/watchlist/movies`, {
+    params: {
+      page,
+      sort_by: sortBy,
+    },
+  });
+  return {
+    results: res.data.results,
+    page: res.data.page,
+    total_pages: res.data.total_pages,
+  };
+}
+
+export async function addToWatchlist(movieId: number) {
+  await client.post(`/account/${accountId}/watchlist`, {
+    media_type: "movie",
+    media_id: movieId,
+    watchlist: true,
+  });
+}
+
+export async function removeFromWatchlist(movieId: number) {
+  await client.post(`/account/${accountId}/watchlist`, {
+    media_type: "movie",
+    media_id: movieId,
+    watchlist: false,
+  });
 }

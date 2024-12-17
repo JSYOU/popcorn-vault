@@ -30,13 +30,14 @@ export default function MoviePage() {
   const { id }: { id: string } = useParams();
   const [movie, setMovie] = useState<Movie | null>(null);
   const [loading, setLoading] = useState(true);
+  const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
     if (!id) return;
     setLoading(true);
     fetchMovieDetail(id)
       .then((data) => setMovie(data))
-      .catch(() => message.error("無法取得電影詳細資訊"))
+      .catch(() => messageApi.error("無法取得電影詳細資訊"))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -67,7 +68,9 @@ export default function MoviePage() {
 
   return (
     <Container>
+      {contextHolder}
       <DetailHeader
+        id={movie.id}
         title={movie.title}
         posterPath={movie.poster_path}
         rate={movie.vote_average}

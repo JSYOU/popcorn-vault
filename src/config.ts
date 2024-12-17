@@ -6,11 +6,13 @@ dotenv.config();
 export interface IConfig {
   env: string;
   tmdbApiKey: string;
+  tmdbAccountId: string;
 }
 
 const defaultConfigs = {
   env: "development",
   tmdbApiKey: process.env.TMDB_API_KEY || "",
+  tmdbAccountId: process.env.TMDB_ACCOUNT_ID || "",
 };
 
 const localConfig = {
@@ -26,6 +28,7 @@ const getConfig = (): IConfig => {
 
   const envConfigs = pickBy({
     tmdbApiKey: process.env.NEXT_PUBLIC_TMDB_API_KEY,
+    tmdbAccountId: process.env.NEXT_PUBLIC_TMDB_ACCOUNT_ID,
   });
 
   switch (env) {

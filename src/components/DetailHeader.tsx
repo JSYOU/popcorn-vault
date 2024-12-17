@@ -1,8 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import { Button } from "antd";
+import { Button, message } from "antd";
 import { BookOutlined } from "@ant-design/icons";
 import Rate from "@/components/Rate";
+import { addToWatchlist } from "@/api/tmdb";
 
 const HeaderSection = styled.div`
   display: flex;
@@ -54,6 +55,7 @@ const Overview = styled.p`
 `;
 
 interface HeaderProps {
+  id: number;
   title: string;
   posterPath: string;
   rate: number;
@@ -64,6 +66,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({
+  id,
   title,
   posterPath,
   rate,
@@ -72,31 +75,55 @@ const Header: React.FC<HeaderProps> = ({
   releaseDate,
   overview,
 }) => {
+  const [messageApi, contextHolder] = message.useMessage();
+  const [loading, setLoading] = React.useState(false);
+
+  const handleAddToWatchlist = async () => {
+    try {
+      setLoading(true);
+      await addToWatchlist(id);
+      messageApi.success("已加入待看清單");
+    } catch {
+      messageApi.error("加入待看清單失敗");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <HeaderSection>
-      <Poster
-        src={`https://image.tmdb.org/t/p/w500${posterPath}`}
-        alt={title}
-      />
-      <DetailInfo>
-        <Title>
-          {title}
-          <Button type="primary" icon={<BookOutlined />} size="large">
-            加入待看清單
-          </Button>
-        </Title>
-        <RateBox>
-          <span>評分：</span>
-          <Rate rate={rate} />
-          <span>
-            {(rate / 2).toFixed(1)} / 5 ({voteCount})
-          </span>
-        </RateBox>
-        {director && <InfoLine>導演：{director}</InfoLine>}
-        <InfoLine>上映日期：{releaseDate}</InfoLine>
-        <Overview>{overview}</Overview>
-      </DetailInfo>
-    </HeaderSection>
+    <>
+      {contextHolder}
+      <HeaderSection>
+        <Poster
+          src={`https://image.tmdb.org/t/p/w500${posterPath}`}
+          alt={title}
+        />
+        <DetailInfo>
+          <Title>
+            {title}
+            <Button
+              loading={loading}
+              type="primary"
+              icon={<BookOutlined />}
+              size="large"
+              onClick={handleAddToWatchlist}
+            >
+              加入待看清單
+            </Button>
+          </Title>
+          <RateBox>
+            <span>評分：</span>
+            <Rate rate={rate} />
+            <span>
+              {(rate / 2).toFixed(1)} / 5 ({voteCount})
+            </span>
+          </RateBox>
+          {director && <InfoLine>導演：{director}</InfoLine>}
+          <InfoLine>上映日期：{releaseDate}</InfoLine>
+          <Overview>{overview}</Overview>
+        </DetailInfo>
+      </HeaderSection>
+    </>
   );
 };
 
